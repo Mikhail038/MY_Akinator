@@ -16,7 +16,7 @@ CXX_FLAGS += $(DOP)
 
 DO: DO_AKINATOR
 
-DO_AKINATOR: OBJECTS/akinator.o OBJECTS/main_akinator.o
+DO_AKINATOR: OBJECTS OBJECTS/akinator.o OBJECTS/main_akinator.o
 	g++ OBJECTS/akinator.o OBJECTS/main_akinator.o -o akinator $(CXX_FLAGS)
 
 OBJECTS/akinator.o: AKINATOR/akinator.cpp
@@ -24,3 +24,6 @@ OBJECTS/akinator.o: AKINATOR/akinator.cpp
 
 OBJECTS/main_akinator.o: AKINATOR/main_akinator.cpp
 	g++ -c -o OBJECTS/main_akinator.o AKINATOR/main_akinator.cpp $(CXX_FLAGS)
+
+OBJECTS:
+	mkdir -p OBJECTS
