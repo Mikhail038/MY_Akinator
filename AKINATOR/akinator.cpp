@@ -126,7 +126,7 @@ int test_main_2 (void)
 {
     setlocale(LC_CTYPE, "");
 
-    SNode* Root = make_node (L"_root_");
+    SNode* Root = make_node (NULL);
 
     read_tree (Root);
 

@@ -28,9 +28,9 @@ enum EBranch
 
 typedef struct
 {
-    int      ip     = 0;
+    size_t      ip     = 0;
     EBranch  branch = left;
-    int      size   = 0;
+    size_t      size   = 0;
     wchar_t* Array  = NULL;
 } SBuffer;
 
@@ -45,6 +45,7 @@ void print_head (void);
 int test_main_2 (void);
 
 //===================================================================================================================================================================
+int selector (SNode* Root);
 
 int select_mode ();
 
@@ -62,7 +63,7 @@ void add_new_object (SNode* Node);
 
 //===================================================================================================================================================================
 
-int check_sym (SBuffer Buffer);
+int check_sym (SBuffer* Buffer);
 
 int read_tree (SNode* Root);
 
