@@ -130,7 +130,7 @@ int test_main_2 (void)
 
     read_tree (Root);
 
-    wprint_preorder (Root);
+    //wprint_preorder (Root);
 
     print_head ();
 
@@ -425,99 +425,81 @@ void file_wprint (SNode* Node, int n, FILE* OutputFile)
     return;
 }
 
-int read_node (SBuffer* Buffer, SNode* Parent)
+int check_sym (SBuffer* Buffer)
 {
-    //wprintf (  L"-1-\n""%ls""\n""-1-\n", &(Buffer->Array[Buffer->ip]));
-
-    seek (Buffer);
-
-    wprintf (  L"-2|%d|%ls|-\n"
-                "%ls""\n"
-                "-2-\n"
-                , Buffer->branch, Parent->data, &(Buffer->Array[Buffer->ip]));
-
-    // if ((Buffer->Array[Buffer->ip] == L'{') && (Buffer->branch == right))
-    // {
-    //     seek_out (Buffer);
-    //     seek (Buffer);
-    // }
-    if (Buffer->Array[Buffer->ip] == L'}')
+    if (Buffer->Array[Buffer->ip] == L'{')
     {
         seek_out (Buffer);
-        seek (Buffer);
+    }
+    else if (Buffer->Array[Buffer->ip] == L'}')
+    {
         seek_out (Buffer);
 
-        // for (; Buffer->ip < Buffer->size; Buffer->ip++)
-        // {
-        //     // if ((wcscmp (Buffer->Array[Buffer->ip], L"\n")) && ((wcscmp (Buffer->Array[Buffer->ip], L" "))))
-        //     if ((Buffer->Array[Buffer->ip] == L'{'))// || ((Buffer->Array[Buffer->ip] == L' ')))
-        //     {
-        //         Buffer->ip++;
-        //         break;
-        //     }
-        // }
+        //wprintf (L"Leafed\n");
 
-        wprintf (L"Leafed\n");
+        seek (Buffer);
 
         return LEAF;
     }
-    else if (Buffer->Array[Buffer->ip] != L'(')
+
+    return 0;
+}
+
+int read_node (SBuffer* Buffer, SNode* Parent)
+{
+    seek (Buffer);
+
+    // wprintf (  L"-2|%d|%ls|-\n"
+    //             "%ls""\n"
+    //             "-2-\n"
+    //             , Buffer->branch, Parent->data
+    //             , &(Buffer->Array[Buffer->ip]));
+
+    wchar_t* Line = NULL;
+
+    if (swscanf (&Buffer->Array[Buffer->ip], L"(%ml[^).]", &Line) < 1)
     {
         wprintf (KRED L"'%lc' Error!=========================================================\n" KNRM, Buffer->Array[Buffer->ip]);
 
         return 1;
     }
-
-    wchar_t* Line = NULL;
-
-    seek (Buffer);
-    MCA (swscanf (&Buffer->Array[Buffer->ip], L"(%ml[^).]", &Line) != 0, NoLineInInputFile);
     seek_out (Buffer);
-
     seek (Buffer);
-
-    if (Buffer->Array[Buffer->ip] == L'{')
-    {
-        seek_out (Buffer);
-    }
-
-    // wprintf (  L"========================\n"
-    //             "%ls""\n"
-    //             , Line);
-
 
     switch (Buffer->branch)
     {
         case left:
             add_left_branch (make_node (Line), Parent);
 
-            //wprint_inorder (Parent);
-            //wprintf (  L"\n==========left==============\n");
+            if (check_sym (Buffer) != 0)
+            {
+                return LEAF;
+            }
+
+           // wprintf (  L"\n==========left==============\n");
 
             Buffer->branch = left;
 
             if (read_node (Buffer, Parent->left) == LEAF)
             {
-                // seek (Buffer);
-                // seek_out (Buffer);
+                //wprintf (  L"\n==========1==============\n");
 
-                break;
+                if (check_sym (Buffer) != 0)
+                {
+                    return LEAF;
+                }
             }
-
-
-            // if (Buffer->Array[Buffer->ip] == L'{')
-            // {
-            //     seek_out (Buffer);
-            // }
 
             Buffer->branch = right;
 
             if (read_node (Buffer, Parent->left) == LEAF)
             {
-                // seek (Buffer);
-                // seek_out (Buffer);
+                //wprintf (  L"\n==========2==============\n");
 
-                break;
+                if (check_sym (Buffer) != 0)
+                {
+                    return LEAF;
+                }
             }
 
             break;
@@ -525,32 +507,35 @@ int read_node (SBuffer* Buffer, SNode* Parent)
         case right:
             add_right_branch (make_node (Line), Parent);
 
-            //wprint_inorder (Parent);
+            if (check_sym (Buffer) != 0)
+            {
+                return LEAF;
+            }
+
             //wprintf (  L"\n===========right=============\n");
 
             Buffer->branch = left;
 
             if (read_node (Buffer, Parent->right) == LEAF)
             {
-                // seek (Buffer);
-                // seek_out (Buffer);
+                //wprintf (  L"\n==========3==============\n");
 
-                break;
+                if (check_sym (Buffer) != 0)
+                {
+                    return LEAF;
+                }
             }
-
-            // if (Buffer->Array[Buffer->ip] == L'{')
-            // {
-                // seek_out (Buffer);
-            // }
 
             Buffer->branch = right;
 
             if (read_node (Buffer, Parent->right) == LEAF)
             {
-                // seek (Buffer);
-                // seek_out (Buffer);
+               // wprintf (  L"\n==========4==============\n");
 
-                break;
+                if (check_sym (Buffer) != 0)
+                {
+                    return LEAF;
+                }
             }
 
             break;
