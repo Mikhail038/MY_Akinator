@@ -161,12 +161,14 @@ int select_mode ()
     {
         wchar_t* Answer = NULL;
 
-        if (wscanf (L"%mls", &Answer) > 0)
+        if (wscanf (L" %ml[^\n]", &Answer) > 0)
         {
             #include "Modes.h"
         }
 
-        wprintf (KNRM KRED L"'%ls' Непрвильный ответ\n" KNRM, Answer);
+        wprintf (KNRM KRED L"'%ls' Неправильный ответ\n" KNRM, Answer);
+
+        free (Answer);
     }
 }
 #undef DEF_MOD
@@ -232,7 +234,7 @@ bool get_answer (void)
     {
         wchar_t* Answer = NULL;
 
-        if (wscanf (L"%mls", &Answer) > 0)
+        if (wscanf (L" %ml[^\n]", &Answer) > 0)
         {
             if (wcscasecmp (Answer, L"y") == 0 || wcscasecmp (Answer, L"yes") == 0 ||
                 wcscasecmp (Answer, L"д") == 0 || wcscasecmp (Answer, L"да")  == 0 )
@@ -249,9 +251,9 @@ bool get_answer (void)
             }
         }
 
-        free (Answer);
+        wprintf (KNRM L"'%ls' Непрвильный ответ (правильно так: y | n | yes | no | д | н | да | нет )\n", Answer);
 
-        wprintf (KNRM L"Непрвильный ответ (правильно так: y n yes no д н да нет)\n");
+        free (Answer);
     }
 }
 
@@ -291,6 +293,8 @@ void add_new_object (SNode* Node)
         }
 
         wprintf (KNRM KRED L"Непрвильный формат ответа\n" KNRM);
+
+
     }
 
     return;
