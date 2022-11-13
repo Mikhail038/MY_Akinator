@@ -10,26 +10,29 @@
 
 typedef wchar_t* TNode;
 
-typedef struct SNode
-{
-    SNode* left   = NULL;
-    SNode* right  = NULL;
-    TNode  data   = 0;
-    SNode* parent = NULL;
-} SNode;
-
 enum EBranch
 {
-    left  = -1,
-    right =  1
+    Left  = -1,
+    Right =  1
 };
+
+typedef struct SNode
+{
+    SNode*  left   = NULL;
+    SNode*  right  = NULL;
+    TNode   data   = 0;
+    SNode*  parent = NULL;
+    EBranch branch = Left;
+} SNode;
+
+
 
 //===================================================================================================================================================================
 
 typedef struct
 {
     size_t      ip     = 0;
-    EBranch  branch = left;
+    EBranch  branch = Left;
     size_t      size   = 0;
     wchar_t* Array  = NULL;
 } SBuffer;
@@ -49,9 +52,22 @@ int selector (SNode* Root);
 
 int select_mode ();
 
+//===================================================================================================================================================================
+
 int play_aki_questions (SNode* Root);
 
-int play_find_akinator (SNode* Root);
+int play_aki_definition (SNode* Root);
+
+SNode* find_node (wchar_t* Line, SNode* Node);
+
+void print_definition (SNode* Node, int n);
+
+//===================================================================================================================================================================
+
+
+int change_base (SNode* Root);
+
+//int play_find_akinator (SNode* Root);
 
 int ask (SNode* Node);
 
@@ -102,6 +118,14 @@ void wprint_preorder (SNode* Node);
 void print_node (TNode Data);
 
 void wprint_node (wchar_t* Data);
+
+int make_gv_tree (SNode* Root);
+
+void make_gv_node (FILE* File, SNode* Node);
+
+void print_gv_node (FILE* File, SNode* Node);
+
+void draw_gv_tree (void);
 
 
 

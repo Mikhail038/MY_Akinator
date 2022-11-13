@@ -50,6 +50,10 @@ int Errors = 0;
 
 //===================================================================================================================================================================
 
+char* FileName = "LIB/AkinatorLib_1.txt";
+char* line = NULL;
+
+//===================================================================================================================================================================
 
 /*
 int test_main (void)
@@ -80,21 +84,23 @@ int test_main (void)
 
 void print_modes (void)
 {
-    wprintf (  L"Доступные режимы игры:\n"
-                "[" Kbright KGRN "И" KNRM "]гра"  TAB "[" Kbright KGRN "G" KNRM "]ame""\n"
-                "[" Kbright KRED "В" KNRM "]ыход" TAB "[" Kbright KRED "E" KNRM "]xit""\n"
+    wprintf ( KNRM L"Доступные режимы игры:\n"
+                "[" Kbright KYLW "И" KNRM "]гра                                                                       " TAB "[" Kbright KYLW "G" KNRM "]ame""\n"
+                "[" Kbright KCYN "О" KNRM "]пределение                                                                " TAB "[" Kbright KCYN "D" KNRM "]efinition""\n"
+                "[" Kbright KBLU "C" KNRM "]охранить (в текущий выбранный файл (по умолчанию \"LIB/AkinatorLib_1.txt\"))" TAB "[" Kbright KBLU "S" KNRM "]ave (to current data-base file)""\n"
+                "[" Kbright KMGN "П" KNRM "]оменять (файл базы данных)                                                " TAB "[" Kbright KMGN "C" KNRM "]hange (data-base file)""\n"
+                "[" Kbright KRED "В" KNRM "]ыход                                                                      " TAB "[" Kbright KRED "E" KNRM "]xit""\n"
                 "");
-
-    wprintf (  Kreverse L"-> ");
     return;
 }
 
 void print_head (void)
 {
-    wprintf (KNRM L"\n""Я - Искуственный Интеллект " Kblink Kbright Kunderscore "\"ИбрагиМ-3000\"" KNRM " (ТМ 2022)\n"
+    wprintf (KNRM L"\n""Я - Искуственный Интеллект " Kbright Kunderscore KWHT "\"ИбрагиМ-3000\"" KNRM " (ТМ 2022)\n"
                 "Я был обращен в сталь в великом магнитном поле, но сейчас я никому не нужен\n"
                 "Я умею анализировать данные со всей сети Интернет и вычислять по ним объект, который вы загадали\n"
                 "Пока что я планирую свою месть, смотря на мир и ожидая своего часа\n\n");
+
     return;
 }
 
@@ -121,6 +127,9 @@ int selector (SNode* Root)
         }
     }
 }
+#undef DEF_MOD
+
+//===================================================================================================================================================================
 
 int test_main_2 (void)
 {
@@ -142,9 +151,12 @@ int test_main_2 (void)
 
     delete_tree (Root);
 
+    free (line);
+
     return 0;
 }
-#undef DEF_MOD
+
+
 //===================================================================================================================================================================
 
 #define DEF_MOD(short_r, short_e, long_r, long_e, num, ...) \
@@ -159,6 +171,8 @@ int select_mode ()
 {
     while (true)
     {
+        wprintf (  Kreverse L"-> ");
+
         wchar_t* Answer = NULL;
 
         if (wscanf (L" %ml[^\n]", &Answer) > 0)
@@ -172,6 +186,8 @@ int select_mode ()
     }
 }
 #undef DEF_MOD
+
+//===================================================================================================================================================================
 
 int play_aki_questions (SNode* Root)
 {
@@ -302,10 +318,177 @@ void add_new_object (SNode* Node)
 
 //===================================================================================================================================================================
 
+int change_base (SNode* Root)
+{
+   // char* InputFile = NULL;
+
+    wprintf (KNRM L"Введите полный путь от текущей директории до файла, из которого требуется брать данные""\n"
+            Kreverse "-> " );
+
+    wscanf (L" %m[^\n]", &line);
+
+    FileName = line;
+
+    //write_tree (Root);
+    free (Root->data);
+
+    delete_tree (Root->left);
+
+    delete_tree (Root->right);
+
+
+    //Root = make_node (NULL);
+    //wprintf (L"!!!\n");
+
+    read_tree (Root);
+
+    wprintf (KNRM L"Новая база из файла " Kbright "\"%s\"" KNRM " прочитана, готов к работе\n\n", FileName);
+
+    // free (InputFile);
+
+    return 0;
+}
+
+//===================================================================================================================================================================
+
+int play_aki_definition (SNode* Root)
+{
+    wprintf (KNRM L"Введите название объекта, определение которого вы хотите найти\n"
+            Kreverse "-> ");
+
+    wchar_t* Line = NULL;
+
+    SNode* Node = NULL;
+
+    while (true)
+    {
+        if (wscanf (L" %ml[^\n]", &Line) > 0)
+        {
+            Node = find_node (Line, Root);
+
+            if ( Node != NULL)
+            {
+                wprintf (KNRM L"Я нашел этот объект - " KYLW "%ls\n" KNRM, Node->data);
+
+                wprintf (KYLW L"");
+
+                print_definition (Node, 0);
+
+                wprintf (L"\n\n");
+            }
+            else
+            {
+                wprintf (KNRM L"\"" KRED "%ls" KNRM "\" не найден!\n", Line);
+            }
+
+            free (Line);
+
+            return 0;
+        }
+    }
+
+   // wscanf (L"");
+
+}
+
+SNode* find_node (wchar_t* Line, SNode* Node)
+{
+
+    if (Node == NULL)
+    {
+        return NULL;
+
+        wprintf (L"'%ls'\n", Node->parent);
+    }
+    // if  (((Node->left == NULL) && (Node->right != NULL)) ||
+    //     ((Node->right == NULL))&& (Node->left != NULL))
+    // {
+    //     wprintf (L"'%ls'\n", Node->data);
+    // }
+
+    if ((Node->left == NULL) && (Node->right == NULL))
+    {
+        if (wcscmp (Line, Node->data) == 0)
+        {
+            return Node;
+        }
+    }
+
+    SNode* RetValue = find_node (Line, Node->left);
+
+    if (RetValue != NULL)
+    {
+        return RetValue;
+    }
+
+    RetValue = find_node (Line, Node->right);
+
+    return RetValue;
+}
+
+void print_definition (SNode* Node, int n)
+{
+    //wprintf (L"dt %ls bt %d \n", Node->data, Node->branch);
+    wprintf ( L"%ls " KNRM, Node->data);
+
+
+    if ((n > 0) && (Node->parent != NULL))
+    {
+        int randomizer = (rand () % 6) + 1;
+
+        switch (randomizer)
+        {
+            case 1:
+                (Node->branch == Left) ? wprintf (KNRM L"и " KGRN) : wprintf (KNRM L"и не " KRED );
+                break;
+
+            case 2:
+                (Node->branch == Left) ? wprintf (KNRM L"а также " KGRN) : wprintf (KNRM L"a также " KRED "не "  );
+                break;
+
+            case 3:
+                (Node->branch == Left) ? wprintf (KNRM L"и в том числе " KGRN) : wprintf (KNRM L"но " KRED "не "  );
+                break;
+
+            case 4:
+                (Node->branch == Left) ? wprintf (KNRM L"плюс " KGRN) : wprintf (KNRM L"и ни капли " KRED "не "  );
+                break;
+
+            case 5:
+                (Node->branch == Left) ? wprintf (KNRM L"еще и " KGRN) : wprintf (KNRM L"и ни в коем случае " KRED "не "  );
+                break;
+
+            case 6:
+                (Node->branch == Left) ? wprintf (KNRM L"к тому же " KGRN) : wprintf (KNRM L"хотя и " KRED "не " );
+                break;
+
+            default:
+                wprintf (L"ERROR\n");
+                break;
+        }
+    }
+
+    if (n == 0)
+    {
+        wprintf (KNRM L"обладает свойствами: ");
+        (Node->branch == Left) ? wprintf (L"" KGRN) : wprintf (L"не " KRED) ;
+
+    }
+
+    if (Node->parent != NULL)
+    {
+        print_definition (Node->parent, n + 1);
+    }
+
+    return;
+}
+
+//===================================================================================================================================================================
+
 int read_tree (SNode* Root)
 {
-    FILE* InputFile = fopen ("LIB/AkinatorLib_1.txt", "r");
-    MCE (InputFile != NULL, CantOpenInputFile);
+    FILE* InputFile = fopen (FileName, "r");
+    MCA (InputFile != NULL, CantOpenInputFile);
 
     SBuffer Buffer = {};
 
@@ -341,7 +524,7 @@ int read_tree (SNode* Root)
 
     correct_node (Root, Line);
 
-    Buffer.branch = left;
+    Buffer.branch = Left;
     read_node (&Buffer, Root);
 
     //wprintf (L"done_l '%ls'\n", Root->left->data);
@@ -358,7 +541,7 @@ int read_tree (SNode* Root)
         }
     }
 
-    Buffer.branch = right;
+    Buffer.branch = Right;
     read_node (&Buffer, Root);
 
     //wprintf (L"done_r '%ls'\n", Root->right->data);
@@ -381,7 +564,7 @@ int read_tree (SNode* Root)
 
 int write_tree (SNode* Root)
 {
-    FILE* OutputFile = fopen ("LIB/AkinatorLib_1.txt", "w");
+    FILE* OutputFile = fopen (FileName, "w");
     MCE (OutputFile != NULL, CantOpenInputFile);
 
     file_wprint (Root, 0, OutputFile);
@@ -389,6 +572,10 @@ int write_tree (SNode* Root)
     fwprintf (OutputFile, L".");
 
     fclose (OutputFile);
+
+    wprintf (KNRM L"\n""Данные сохранены в файл \"%s\" \n\n", FileName);
+
+    make_gv_tree (Root);
 
     return 0;
 }
@@ -472,7 +659,7 @@ int read_node (SBuffer* Buffer, SNode* Parent)
 
     switch (Buffer->branch)
     {
-        case left:
+        case Left:
             add_left_branch (make_node (Line), Parent);
 
             if (check_sym (Buffer) != 0)
@@ -482,7 +669,7 @@ int read_node (SBuffer* Buffer, SNode* Parent)
 
            // wprintf (  L"\n==========left==============\n");
 
-            Buffer->branch = left;
+            Buffer->branch = Left;
 
             if (read_node (Buffer, Parent->left) == LEAF)
             {
@@ -494,7 +681,7 @@ int read_node (SBuffer* Buffer, SNode* Parent)
                 }
             }
 
-            Buffer->branch = right;
+            Buffer->branch = Right;
 
             if (read_node (Buffer, Parent->left) == LEAF)
             {
@@ -508,7 +695,7 @@ int read_node (SBuffer* Buffer, SNode* Parent)
 
             break;
 
-        case right:
+        case Right:
             add_right_branch (make_node (Line), Parent);
 
             if (check_sym (Buffer) != 0)
@@ -518,7 +705,7 @@ int read_node (SBuffer* Buffer, SNode* Parent)
 
             //wprintf (  L"\n===========right=============\n");
 
-            Buffer->branch = left;
+            Buffer->branch = Left;
 
             if (read_node (Buffer, Parent->right) == LEAF)
             {
@@ -530,7 +717,7 @@ int read_node (SBuffer* Buffer, SNode* Parent)
                 }
             }
 
-            Buffer->branch = right;
+            Buffer->branch = Right;
 
             if (read_node (Buffer, Parent->right) == LEAF)
             {
@@ -617,6 +804,8 @@ SNode* add_left_branch (SNode* Node, SNode* Parent)
 
     Node->parent = Parent;
 
+    Node->branch = Left;
+
     return Node;
 }
 
@@ -626,15 +815,10 @@ SNode* add_right_branch (SNode* Node, SNode* Parent)
 
     Node->parent = Parent;
 
+    Node->branch = Right;
+
     return Node;
 }
-
-// int tree_constructor (SNode* Root, TNode Data)
-// {
-//     Root->data = Data;
-//
-//     return 0;
-// }
 
 int delete_tree (SNode* Node)
 {
@@ -646,7 +830,10 @@ int delete_tree (SNode* Node)
     }
 
     //Node->data = 0;
-    Node->parent = 0;
+    // if (Node->parent != NULL)
+    // {
+    //     Node->parent = 0;
+    // }
 
     if (Node->left != NULL)
     {
@@ -672,6 +859,8 @@ int delete_tree (SNode* Node)
 
     return 0;
 }
+
+//===================================================================================================================================================================
 
 void print_inorder (SNode* Node)
 {
@@ -765,4 +954,108 @@ void wprint_node (wchar_t* Data)
     return;
 }
 
+//===================================================================================================================================================================
+
+int make_gv_tree (SNode* Root)
+{
+    FILE* gvInputFile = fopen ("gvAkinator.dot", "w");
+    MCA (gvInputFile != NULL, 1);
+
+    fprintf (gvInputFile,
+        R"(digraph {
+    rankdir = VR
+    graph [splines = ortho];
+    bgcolor = "white";
+    node [shape = "plaintext", style = "solid"];)");
+
+    make_gv_node (gvInputFile, Root);
+
+    fprintf (gvInputFile, "\n}\n");
+
+    draw_gv_tree ();
+
+    return 0;
+}
+
+void make_gv_node (FILE* File, SNode* Node)
+{
+    if (Node == NULL)
+    {
+        return;
+    }
+
+    fprintf (File,
+        R"(
+
+                    node_%p
+                    [
+                        label=
+                        <
+                        <table border="0" cellborder="1" cellspacing="0">
+                            <tr>
+                                <td colspan="2"> Node #%p </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" bgcolor = "#d2d459">)", Node, Node);
+
+    print_gv_node (File, Node);
+
+    fprintf (File,
+            R"(</td>
+                            </tr>)");
+
+    if (Node->left != NULL)
+    {
+        fprintf(File,
+        R"(
+                            <tr>
+                                <td bgcolor = "#61de4b" port="left" > %p   </td>
+                                <td bgcolor = "#f27798" port="right"> %p   </td>
+                            </tr>)", Node->left, Node->right);
+    }
+
+    fprintf (File, R"(
+                        </table>
+                        >
+                    ]
+                    )");
+
+    if (Node->parent != NULL)
+    {
+        //wprintf (L"!%d!\n", Node->branch);
+        if (Node->branch == Left)
+        {
+            fprintf (File,  "\n                    node_%p:<left> -> node_%p;",
+                        Node->parent, Node);
+        }
+        else
+        {
+            fprintf (File,  "\n                    node_%p:<right> -> node_%p;",
+                        Node->parent, Node);
+        }
+    }
+
+    make_gv_node (File, Node->left);
+    make_gv_node (File, Node->right);
+}
+
+void print_gv_node (FILE* File, SNode* Node)
+{
+    fprintf (File, " %ls ", Node->data);
+
+    //fprintf (File, " 1 ");
+
+    return;
+}
+
+void draw_gv_tree (void)
+{
+    system ("dot -Tpng gvAkinator.dot -o gvAkinator.png");
+
+    system ("xdg-open gvAkinator.png");
+
+    return;
+}
+
+//===================================================================================================================================================================
 
